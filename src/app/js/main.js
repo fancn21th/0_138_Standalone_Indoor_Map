@@ -49,3 +49,8 @@ setInterval(() => {
   if (index < data.length - 1) index++;
   else index = 0;
 }, 1000);
+
+window.addEventListener("message", function (event) {
+  console.log("received: " + event.data);
+  // can message back using event.source.postMessage(...)
+});
