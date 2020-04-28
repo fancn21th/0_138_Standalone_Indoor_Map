@@ -1,5 +1,5 @@
 module.exports = {
-  sourcePath: './src',
+  sourcePath: "./src",
   buildPath: "./build",
   filesToWatch: [
     "./src/vendor/css/**/*.css",
@@ -12,6 +12,5 @@ module.exports = {
     "./src/vendor/css/**/*.css",
     "./src/vendor/js/**/*.js",
     "./src/app/css/**/*.css",
-    "./src/app/js/**/*.js",
   ],
 };
