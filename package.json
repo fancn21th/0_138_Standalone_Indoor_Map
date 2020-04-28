@@ -4,7 +4,8 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "start": "gulp"
+    "start": "gulp",
+    "build": "gulp build"
   },
   "keywords": [
     "vanilla javascript isolation test template",
@@ -18,6 +19,7 @@
     "browser-sync": "^2.26.7",
     "del": "^5.1.0",
     "gulp": "^4.0.2",
+    "gulp-concat": "^2.6.1",
     "gulp-inject": "^5.0.4"
   }
 }

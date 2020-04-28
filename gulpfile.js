@@ -2,57 +2,97 @@ const { parallel, series, src, dest, watch } = require("gulp");
 const inject = require("gulp-inject");
 const del = require("del");
 const browserSync = require("browser-sync").create();
-const { buildPath, filesToWatch, filesToInject } = require("./gulpfile.config");
+const {
+  sourcePath,
+  buildPath,
+  filesToWatch,
+  filesToInject,
+} = require("./gulpfile.config");
 
-// INJECT TASK
+const appPath = `${sourcePath}/**/app`;
+const appJsPath = `${appPath}/**/*.js`;
+const appCssPath = `${appPath}/**/*.css`;
+const appImgPath = `${appPath}/**/*.{png,gif,jpg,svg}`;
+const vendorPath = `${sourcePath}/**/vendor`;
+const vendorJsPath = `${vendorPath}/**/*.js`;
+const vendorCssPath = `${vendorPath}/**/*.css`;
+
+/**
+ *  HTML 注入
+ */
 function index(cb) {
   const target = src("./src/index.html");
   const sources = src(filesToInject, {
-    read: false
+    read: false,
   });
   return target
     .pipe(inject(sources, { ignorePath: "src" }))
     .pipe(dest(buildPath));
 }
 
-// COPY TASK
-function copyCss(cb) {
-  return src("./src/**/*.css").pipe(dest(buildPath));
-}
-
-function copyVendorJs(cb) {
-  return src("./src/**/js/vendor/*.js").pipe(dest(buildPath));
-}
-
-function copyAppJs(cb) {
-  return src("./src/**/app/**/*.js").pipe(dest(buildPath));
-}
-
-// CLEAN TASK
+/**
+ *  文件清理
+ */
 function clean(cb) {
   return del([buildPath], { force: true });
 }
 
-// BUILD TASK
-const build = series(clean, parallel(copyVendorJs, copyAppJs, copyCss), index);
+/**
+ *  文件拷贝
+ */
+function copyVendorCss(cb) {
+  return src("./src/vendor/**/*.css").pipe(dest(buildPath));
+}
 
-// RELOAD
+function copyVendorJs(cb) {
+  return src("./src/vendor/**/*.js").pipe(dest(buildPath));
+}
+
+function copyAppCss(cb) {
+  return src(appCssPath).pipe(dest(buildPath));
+}
+
+function copyAppJs(cb) {
+  return src(appJsPath).pipe(dest(buildPath));
+}
+
+function copyAppImg(cb) {
+  return src(appImgPath).pipe(dest(buildPath));
+}
+
+/**
+ *  项目重加载
+ */
 function sync(cb) {
   browserSync.reload();
   cb();
 }
 
-// SERVE
+/**
+ *  项目编译
+ */
+// 开发编译
+const devbuild = series(
+  clean,
+  parallel(copyVendorCss, copyVendorJs, copyAppCss, copyAppJs, copyAppImg),
+  index
+);
+// 生产编译
+const build = devbuild;
+
+/**
+ *  browserSync 伺服
+ */
 function serve(cb) {
   // Serve files from the root of this project
   browserSync.init({
     server: {
-      baseDir: buildPath
-    }
+      baseDir: buildPath,
+    },
   });
 
-  watch(filesToWatch, { delay: 500 }, series(build, sync));
+  watch(filesToWatch, { delay: 500 }, series(devbuild, sync));
 }
 
 exports.build = build;
-exports.default = series(build, index, serve);
+exports.default = series(devbuild, serve);
