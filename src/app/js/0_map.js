@@ -124,9 +124,4 @@ class IndoorMap {
       crs.unproject(L.point(mapExtent[0], mapExtent[1])),
     ]);
   }
-
-  addMarker(x, y) {
-    const pos = this._xyOffset(x, y);
-    return L.marker(pos).addTo(this.map).openPopup();
-  }
 }

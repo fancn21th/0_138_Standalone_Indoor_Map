@@ -1,4 +1,4 @@
-const map = new IndoorMap("map", {
+const realtime = new RealTimeMap("map", {
   mapWidth: 6316,
   mapHeight: 8114,
   actualWidth: 1097,
@@ -7,7 +7,7 @@ const map = new IndoorMap("map", {
   actualOffsetY: 64,
 });
 
-map.addMarker(0, 0);
+realtime.addMarker(0, 0);
 
 // markers data
 var data = [
@@ -38,3 +38,14 @@ var data = [
   "F,f111,69.9,77.0,0.0,0,1586527477,a88999,I",
   "F,f111,70.0,78.1,0.0,0,1586527478,a88999,I",
 ];
+
+let index = 0;
+
+setInterval(() => {
+  var arr = data[index].split(",");
+  var x = arr[2] * 10;
+  var y = arr[3] * 10;
+  realtime.updatePosition(x, y);
+  if (index < data.length - 1) index++;
+  else index = 0;
+}, 1000);
