@@ -1,5 +1,8 @@
 const { parallel, series, src, dest, watch } = require("gulp");
 const inject = require("gulp-inject");
+const sourcemaps = require("gulp-sourcemaps");
+const babel = require("gulp-babel");
+const concat = require("gulp-concat");
 const del = require("del");
 const browserSync = require("browser-sync").create();
 const {
@@ -53,7 +56,16 @@ function copyAppCss(cb) {
 }
 
 function copyAppJs(cb) {
-  return src(appJsPath).pipe(dest(buildPath));
+  return src(appJsPath)
+    .pipe(sourcemaps.init())
+    .pipe(
+      babel({
+        presets: ["@babel/preset-env"],
+      })
+    )
+    .pipe(concat("app.all.js"))
+    .pipe(sourcemaps.write("."))
+    .pipe(dest(`${buildPath}/app/js`));
 }
 
 function copyAppImg(cb) {
