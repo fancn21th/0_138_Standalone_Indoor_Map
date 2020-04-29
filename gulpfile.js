@@ -58,11 +58,7 @@ function copyAppCss(cb) {
 function copyAppJs(cb) {
   return src(appJsPath)
     .pipe(sourcemaps.init())
-    .pipe(
-      babel({
-        presets: ["@babel/preset-env"],
-      })
-    )
+    .pipe(babel())
     .pipe(concat("app.all.js"))
     .pipe(sourcemaps.write("."))
     .pipe(dest(`${buildPath}/app/js`));

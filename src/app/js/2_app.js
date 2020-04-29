@@ -1,10 +1,11 @@
 class IndoorMapApp {
   constructor() {
     this.eventHandlerMap = {
-      "rt-devices-by-type": this._realtimeDevicesByTypeHandler,
-      "rt-device": this._realtimeDeviceHandler,
-      "his-device": this._historyDeviceHandler,
+      "rt-devices-by-type": this._realtimeDevicesByTypeHandler.bind(this),
+      "rt-device": this._realtimeDeviceHandler.bind(this),
+      "his-device": this._historyDeviceHandler.bind(this),
     };
+    this.dataMgr = new WarehouseData("http://localhost:3000");
   }
   _subscribe(eventHandlerMap) {
     window.addEventListener("message", function (event) {
@@ -15,7 +16,10 @@ class IndoorMapApp {
     });
   }
   _realtimeDevicesByTypeHandler(data) {
-    console.log(data);
+    this.dataMgr
+      .getLastPos(data)
+      .then((res) => res.json())
+      .then((data) => console.log(data));
   }
   _realtimeDeviceHandler(data) {
     console.log(data);
